@@ -9,11 +9,9 @@
 </head>
 
 <body>
-
+    <?php include 'funciones.php'; ?>
     <div class="container">
-
         <h1 class="mb-3"> Detalle de compra </h1>
-
         <div class="border-bottom-3">
             <h2> Cofre de descuentos </h2>
             <table class="table">
@@ -24,33 +22,45 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <img src="img/iconos/detalle/oro.png" alt="Oro" />
-                            Oro ($200)
-                        </td>
-                        <td> </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <img src="img/iconos/detalle/plata.png" alt="Oro" />
-                            Plata ($50)
-                        </td>
-                        <td> </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <img src="img/iconos/detalle/bronce.png" alt="Oro" />
-                            Bronce ($10)
-                        </td>
-                        <td> </td>
-                    </tr>
+                    <?php
+                    $datosTablaCofreDescuentos = [
+                        [
+                            'nombre' => NOMBRE_ORO,
+                            'imagen' => 'img/iconos/detalle/oro.png',
+                            'texto' => 'Oro ($200)',
+                        ],
+                        [
+                            'nombre' => NOMBRE_PLATA,
+                            'imagen' => 'img/iconos/detalle/plata.png',
+                            'texto' => 'Plata ($50)',
+                        ],
+                        [
+                            'nombre' => NOMBRE_BRONCE,
+                            'imagen' => 'img/iconos/detalle/bronce.png',
+                            'texto' => 'Bronce ($10)',
+                        ],
+                    ];
+                    $detalle = getDetalleXCofre($cofre);
+                    foreach ($datosTablaCofreDescuentos as $datoTabla) :
+                    ?>
+                        <tr>
+                            <td>
+                                <img src="<?php echo $datoTabla['imagen']; ?>" alt="<?php echo $datoTabla['nombre']; ?>" />
+                                <?php echo $datoTabla['texto']; ?>
+                            </td>
+                            <td>
+                                <?php echo $detalle[$datoTabla['nombre']]; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                     <tr>
                         <td>
                             <img src="img/iconos/detalle/bonif.png" alt="Bonificación" />
                             Bonificación
                         </td>
-                        <td> </td>
+                        <td>
+                            <?php echo '$' . $detalle['bonif']; ?>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -69,30 +79,49 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <img src="img/iconos/categorias/bebidas.png" alt="">
-
-                            111
-                        </td>
-                        <td> Coca Cola 1.5LT </td>
-                        <td> $100,00 </td>
-                        <td> 3 </td>
-                        <td> $300,00 </td>
-                    </tr>
+                    <?php
+                    $descuento = 10;
+                    $montoTotal = getMontoXProductos($productos);
+                    $montoConDescuento = $montoTotal - ($montoTotal * $descuento / 100);
+                    if ($montoConDescuento < 0) {
+                        $montoConDescuento = 0;
+                    }
+                    foreach ($productos as $producto) :
+                    ?>
+                        <tr>
+                            <td>
+                                <img src="img/iconos/categorias/<?php echo $producto['icono'] ? $producto['icono'] : 'imagen.png'; ?>" alt="Imágen de <?php echo $producto['detalle']; ?>" />
+                                <?php echo $producto['cod']; ?>
+                            </td>
+                            <td><?php echo $producto['detalle']; ?></td>
+                            <td>$<?php echo number_format($producto['precio'], 2, ',', '.'); ?></td>
+                            <td><?php echo $producto['cantidad']; ?></td>
+                            <td>
+                                $<?php echo number_format($producto['precio'] * $producto['cantidad'], 2, ',', '.'); ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="5">
-                            Total:
+                            <?php if ($descuento > 0): ?>
+                                <span class="text-muted text-decoration-line-through">
+                                    Total: $<?php echo number_format($montoTotal, 2, ',', '.'); ?>
+                                </span>
+                                /
+                                <span class="text-success fw-bold">
+                                    Total con descuento: $<?php echo number_format($montoConDescuento, 2, ',', '.'); ?>
+                                </span>
+                            <?php else: ?>
+                                Total: $<?php echo number_format($montoTotal, 2, ',', '.'); ?>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 </tfoot>
             </table>
         </div>
-
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </body>
 
